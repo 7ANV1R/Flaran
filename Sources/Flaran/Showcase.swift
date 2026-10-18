@@ -19,10 +19,11 @@ import SwiftUI
     static func start(model: AppModel, statusBar: StatusBar, scene: String) {
         NSApp.setActivationPolicy(.accessory)
         NSApp.appearance = NSAppearance(named: .aqua)
-        model.devices.showcase(devices: devices, simulators: simulators, emulators: emulators)
+        model.devices.showcase(devices: Array(devices.prefix(2)), simulators: simulators, emulators: emulators)
 
         let shop = project("shop_app", script: shopScript(withError: scene == "logs"))
         let news = project("news_app", script: newsScript)
+        let admin = project("admin_web", script: shopScript(withError: false))
         var window: NSWindow?
         var mark = NSRect.zero
         window = backdrop { markFrame in
@@ -46,6 +47,7 @@ import SwiftUI
             default:
                 model.run(shop, .defaultConfig, devices[0])
                 model.run(news, .defaultConfig, devices[1])
+                model.run(admin, .defaultConfig, devices[3])
                 model.selectedID = model.sessions.first?.id
             }
             try? await Task.sleep(for: .seconds(5))  // the blurred wallpaper takes a moment to first render
@@ -65,11 +67,9 @@ import SwiftUI
     ]
     static let simulators = [
         SimulatorInfo(id: "SIM-17", name: "iPhone 17", runtime: "iOS 26.0", isBooted: false),
-        SimulatorInfo(id: "SIM-AIR", name: "iPad Air 11-inch (M3)", runtime: "iOS 26.0", isBooted: false),
     ]
     static let emulators = [
         EmulatorInfo(id: "Pixel_9_Pro", name: "Pixel 9 Pro", platformType: "android"),
-        EmulatorInfo(id: "Pixel_Tablet", name: "Pixel Tablet", platformType: "android"),
     ]
 
     /// A throwaway Flutter project whose FVM-pinned `flutter` is a script speaking the daemon protocol.
@@ -140,15 +140,16 @@ import SwiftUI
         return window
     }
 
-    /// Every scene captures the same top-right 720×620 pt of the backdrop, so the images line up
-    /// (the panel always hangs from the same icon). `screencapture -R` takes x,y,w,h in points from the
-    /// top-left of the main display.
+    /// Each capture starts 40 pt left of the panel (or of the reload and restart icons, whichever is
+    /// further left) and is 436 pt tall, so every scene comes out the same size; the top and right are
+    /// the screen's edges. `screencapture -R` takes x,y,w,h in points from the top-left of the main display.
     static func writeRect(of window: NSWindow, panel: NSRect, mark: NSRect) {
         guard let path = ProcessInfo.processInfo.environment["FLARAN_SHOWCASE_RECT"],
               let screenHeight = NSScreen.screens.first?.frame.height else { return }
-        _ = (panel, mark)
-        let w = window.frame
-        let f = NSRect(x: w.maxX - 720, y: w.maxY - 620, width: 720, height: 620)
+        let w = window.frame, margin: CGFloat = 40
+        let minX = max(w.minX, min(panel.minX, mark.minX - 90) - margin)   // 90 pt covers the two buttons left of the mark
+        let minY = w.maxY - 436  // fits the tallest scene with a 40 pt margin below the panel
+        let f = NSRect(x: minX, y: minY, width: w.maxX - minX, height: w.maxY - minY)
         let rect = "\(Int(f.minX)),\(Int(screenHeight - f.maxY)),\(Int(f.width)),\(Int(f.height))"
         try? rect.write(toFile: path, atomically: true, encoding: .utf8)
     }

@@ -15,9 +15,8 @@ Flaran keeps you in the flow. Start your app from the menu bar, then reload or r
 ## A quick look
 
 <p align="center">
-  <img src="assets/screenshots/home.png" width="32%" alt="Flaran's panel with two running apps">
-  <img src="assets/screenshots/devices.png" width="32%" alt="Picking a device">
-  <img src="assets/screenshots/logs.png" width="32%" alt="Logs with an exception highlighted">
+  <img src="assets/screenshots/home.png" width="49%" alt="Flaran's panel with three running apps">
+  <img src="assets/screenshots/devices.png" width="49%" alt="Picking a device">
 </p>
 
 ## What it does

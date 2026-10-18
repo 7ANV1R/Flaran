@@ -8,7 +8,7 @@ set -e
 cd "$(dirname "$0")/.."
 swift build
 mkdir -p assets/screenshots
-for scene in home devices logs; do
+for scene in home devices; do
   rect=$(mktemp -u)
   FLARAN_SHOWCASE=$scene FLARAN_SHOWCASE_RECT=$rect .build/debug/Flaran &
   pid=$!
