@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# SwiftPM / Xcode
+/.build/
+/.swiftpm/
+/build/
+DerivedData/
+xcuserdata/
+*.xcodeproj/
+Package.resolved
+
+# Personal planning notes
+CONTEXT_AND_PLAN.md
+plan/
