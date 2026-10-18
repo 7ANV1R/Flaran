@@ -124,7 +124,7 @@ import SwiftUI
 
     /// A borderless window with a soft wallpaper and a minimal menu bar, just under the panel's level.
     static func backdrop(onMarkFrame: @escaping (NSRect) -> Void) -> NSWindow {
-        let size = NSSize(width: 980, height: 620)
+        let size = NSSize(width: 980, height: 660)
         let screen = NSScreen.main!.visibleFrame
         let window = NSWindow(contentRect: NSRect(x: screen.midX - size.width / 2, y: screen.midY - size.height / 2,
                                                   width: size.width, height: size.height),
@@ -140,15 +140,15 @@ import SwiftUI
         return window
     }
 
-    /// The capture hugs the panel: the menu bar from the reload/restart icons rightwards, down to just
-    /// below the panel. `screencapture -R` takes x,y,w,h in points from the top-left of the main display.
+    /// Every scene captures the same top-right 720×620 pt of the backdrop, so the images line up
+    /// (the panel always hangs from the same icon). `screencapture -R` takes x,y,w,h in points from the
+    /// top-left of the main display.
     static func writeRect(of window: NSWindow, panel: NSRect, mark: NSRect) {
         guard let path = ProcessInfo.processInfo.environment["FLARAN_SHOWCASE_RECT"],
               let screenHeight = NSScreen.screens.first?.frame.height else { return }
-        let w = window.frame, margin: CGFloat = 28
-        let minX = max(w.minX, min(panel.minX, mark.minX - 90) - margin)   // 90 pt covers the two buttons left of the mark
-        let minY = max(w.minY, panel.minY - margin)
-        let f = NSRect(x: minX, y: minY, width: w.maxX - minX, height: w.maxY - minY)
+        _ = (panel, mark)
+        let w = window.frame
+        let f = NSRect(x: w.maxX - 720, y: w.maxY - 620, width: 720, height: 620)
         let rect = "\(Int(f.minX)),\(Int(screenHeight - f.maxY)),\(Int(f.width)),\(Int(f.height))"
         try? rect.write(toFile: path, atomically: true, encoding: .utf8)
     }

@@ -2,7 +2,7 @@
 # Regenerates the README screenshots in assets/screenshots.
 # Runs the debug build in showcase mode (clean backdrop, demo projects and devices) and
 # captures only that window, so nothing from your own desktop ends up in the images, then
-# frames each capture with rounded corners and a shadow.
+# places each capture in the top-right corner of a laptop mockup.
 # Optional: FLARAN_SHOWCASE_WALLPAPER=/path/to/image to use a wallpaper instead of the default blues.
 set -e
 cd "$(dirname "$0")/.."
